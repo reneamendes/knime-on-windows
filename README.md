@@ -1,4 +1,4 @@
-# Resources for Knime headless execution on a Windows Server
+# Resources for management of a Knime Analytics Platform headless execution on a Windows Server
 
 The idea here is to have a Knime Analytics Platform on a Windows Server performing some management activities, like:
 
