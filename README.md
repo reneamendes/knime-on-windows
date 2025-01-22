@@ -21,7 +21,7 @@ How Knime Server works:
 
 <picture>
  <source media="(prefers-color-scheme: dark)" srcset="images/knime_server_AS_IS_EN.png">
- <source media="(prefers-color-scheme: light)" srcset="images/knime_server_AS_IS_EN.png>
+ <source media="(prefers-color-scheme: light)" srcset="images/knime_server_AS_IS_EN.png">
  <img alt="AS IS scenario" src="images/knime_server_AS_IS_EN.png">
 </picture>
 
@@ -37,7 +37,7 @@ How the Knime Server on Windows works:
 
 <picture>
  <source media="(prefers-color-scheme: dark)" srcset="images/knime_server_TO_BE_EN.png">
- <source media="(prefers-color-scheme: light)" srcset="images/knime_server_TO_BE_EN.png>
+ <source media="(prefers-color-scheme: light)" srcset="images/knime_server_TO_BE_EN.png">
  <img alt="TO BE scenario" src="images/knime_server_TO_BE_EN.png">
 </picture>
 
@@ -59,7 +59,7 @@ Now let's dive into the implementation details.
 
 Below are the processes implemented in Knime on Windows Server:
 
-1 – Analyst produces the WF and publishes it on git repo
+[1 – Analyst produces the WF and publishes it on git repo](#1_-_analyst_produces_the_wf_and_publishes_it_on_git_repo)
 2 – WFs from the main branch are available
 3 – Import of WFs from the main branch and make them available in the local Knime workspace
 4 – Knime Analytics Platform on Windows Server accesses the WFs
@@ -71,7 +71,24 @@ Below are the processes implemented in Knime on Windows Server:
 
 <picture>
  <source media="(prefers-color-scheme: dark)" srcset="images/knime_on_windows_how_things_work_EN.png">
- <source media="(prefers-color-scheme: light)" srcset="images/knime_on_windows_how_things_work_EN.png>
+ <source media="(prefers-color-scheme: light)" srcset="images/knime_on_windows_how_things_work_EN.png">
  <img alt="Technical details about Knime on Windows" src="images/knime_on_windows_how_things_work_EN.png">
 </picture>
 
+## 1 – Analyst produces the WF and publishes it on git repo
+
+In order for the workflow to be considered in the Knime execution process on Windows, some precautions must be followed by the developer:
+
+### [Develop the workflow within the caller-caller model](develop_the_workflow_within_the_caller-caller_model)
+### [Provide a scheduling and notification file](provide_a_scheduling_and_notification_file)
+### [Publish the workflow and the notification scheduling file](publish_the_workflow_and_the_notification_scheduling_file)
+
+
+## 2 – WFs from the main branch are available
+## 3 – Import of WFs from the main branch and make them available in the local Knime workspace
+## 4 – Knime Analytics Platform on Windows Server accesses the WFs
+## 5 and 6 – Scheduled WFs are executed independently
+## 7 – WF execution logs are stored
+## 8 – Stored logs are converted to HTML
+## 9 – Web server makes HTML log pages available
+## 10 - Time based orchestrator
