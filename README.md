@@ -11,7 +11,7 @@ Yes, you can do these things and much more using Knime Community/Business Hub. B
 
 The proposed solution was implemented in a Brazilian company that uses Knime Analytics Platform with a focus on data integration, without using data apps or web services. The solution has been online since September 2024 and has remained online for more than 500 uninterrupted hours, without needing to be restarted !
 
-Download the workflow [here] (workflow/_MANAGEMENT_20250122.knar)!
+Download the workflow [here](workflow/_MANAGEMENT_20250122.knar)!
 
 ## AS IS scenario
 
