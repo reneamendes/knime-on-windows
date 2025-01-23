@@ -137,32 +137,32 @@ This file must have the same name as the .knar or .knwf file to be generated, fo
   "workflow_path": "/",
   "workflow_schedule": {
       "daily":  [ 
-                    {"hour": "12", "notify": "user1@mackenzie.br;user2@mackenzie.br"},
-                    {"hour": "15", "notify": "user1@mackenzie.br;user2@mackenzie.br"}
+                    {"hour": "12", "notify": "user1@domain.com;user2@domain.com"},
+                    {"hour": "15", "notify": "user1@domain.com;user2@domain.com"}
                 ],
       "weekly": [	{"day": "Wednesday",
                     "schedule": [
-                                    { "hour": "07","notify": "user1@mackenzie.br;user2@mackenzie.br"},
-                                    { "hour": "11","notify": "user1@mackenzie.br;user2@mackenzie.br"}
+                                    { "hour": "07","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "11","notify": "user1@domain.com;user2@domain.com"}
                                 ]
                     },
                     {"day": "Friday",
                     "schedule": [
-                                    { "hour": "08","notify": "user1@mackenzie.br;user2@mackenzie.br"},
-                                    { "hour": "12","notify": "user1@mackenzie.br;user2@mackenzie.br"}
+                                    { "hour": "08","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "12","notify": "user1@domain.com;user2@domain.com"}
                                 ]
                     }
                 ],
       "monthly": [	{"day": "16",
                     "schedule": [
-                                    { "hour": "06","notify": "user1@mackenzie.br;user2@mackenzie.br"},
-                                    { "hour": "13","notify": "user1@mackenzie.br;user2@mackenzie.br"}
+                                    { "hour": "06","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "13","notify": "user1@domain.com;user2@domain.com"}
                             ]
                     },
                     {"day": "22",
                     "schedule":  [
-                                    { "hour": "09","notify": "user1@mackenzie.br;user2@mackenzie.br"},
-                                    { "hour": "16","notify": "user1@mackenzie.br;user2@mackenzie.br"}
+                                    { "hour": "09","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "16","notify": "user1@domain.com;user2@domain.com"}
                             ]
                     }
                 ]
@@ -174,11 +174,88 @@ For the example above, the file containing the workflows is called CAPELANIA.kna
 
 The content of the .json file must be valid JSON and contain the following objects:
 
-**workflow_name** - string containing the full path to the only workflow that will be executed at the scheduled time. It is assumed that the .knar file will contain the same structure informed in this workflow_name attribute. If more than one workflow must be executed, create a main workflow and inform the path to this main workflow. For example: the CAPELANA.knar file was generated containing the main folder (CAPELANIA) and within it two objects (data folder and workflow LISTAGEM_ANIVERSARIANTES_DO_MES_EXCEL):
+**1) workflow_name** - string containing the full path to the only workflow that will be executed at the scheduled time. It is assumed that the .knar file will contain the same structure informed in this workflow_name attribute. If more than one workflow must be executed, create a main workflow and inform the path to this main workflow. For example: the CAPELANA.knar file was generated containing the main folder (CAPELANIA) and within it two objects (data folder and workflow LISTAGEM_ANIVERSARIANTES_DO_MES_EXCEL):
 
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/export_workflow.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/export_workflow.png">
+ <img alt="Workflow name" src="images/export_workflow.png">
+</picture>
 
+And when the file CAPELANIA.knar is imported into Knime, its structure will be [DESTINATION DIRECTORY]/CAPELANIA:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/destination_folder.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/destination_folder.png">
+ <img alt="Destination" src="images/destination_folder.png">
+</picture>
+
+The **workflow_name** object must contain the following value:
+
+"workflow_name": "`CAPELANIA/LISTAGEM_ANIVERSARIANTES_DO_MES_EXCEL`"
+
+**2) workflow_path** - for future use
+
+**3) workflow_schedule** - an array of schedule objects: an array containing daily schedules, an array containing weekly schedules, and an array containing monthly schedules. 
+
+For example, consider the array of the workflow_schedule object:
+
+```
+"workflow_schedule": {
+      "daily":  [ 
+                    {"hour": "12", "notify": "user1@domain.com;user2@domain.com"},
+                    {"hour": "15", "notify": "user1@domain.com;user2@domain.com"}
+                ],
+      "weekly": [	{"day": "Wednesday",
+                    "schedule": [
+                                    { "hour": "07","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "11","notify": "user1@domain.com;user2@domain.com"}
+                                ]
+                    },
+                    {"day": "Friday",
+                    "schedule": [
+                                    { "hour": "08","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "12","notify": "user1@domain.com;user2@domain.com"}
+                                ]
+                    }
+                ],
+      "monthly": [	{"day": "16",
+                    "schedule": [
+                                    { "hour": "06","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "13","notify": "user1@domain.com;user2@domain.com"}
+                            ]
+                    },
+                    {"day": "22",
+                    "schedule":  [
+                                    { "hour": "09","notify": "user1@domain.com;user2@domain.com"},
+                                    { "hour": "16","notify": "user1@domain.com;user2@domain.com"}
+                            ]
+                    }
+                ]
+  }
+```
+
+In this example, the workflow will be executed:
+- **daily**, at 12:00 and 15:00, and also
+- **weekly**, on Wednesdays at 07:00 and 11:00 and on Fridays at 08:00 and 12:00, and also
+- **monthly**, on the 16th, at 06:00 and 13:00 and on the 22nd, at 09:00 and 16:00
+
+**IMPORTANT:**
+- The times must be in the range 00 to 23, represented with two digits
+- The days of the week must be written in English, with the first letter capitalized and the rest lowercase
+- The days of the month must be in the range 01 to 31, represented with two digits
+
+The **notify** property must contain the emails (one or more, separated by semicolons) of the people who should be notified when errors occur in the execution of the workflow. This functionality has not yet been implemented.
 
 ### Publish the workflow and the notification scheduling file
+
+After developing the workflow and creating the scheduling and notification file, the Analyst must:
+
+1) Export the workflow or the folder containing the workflows and subfolders
+
+The content of what was developed in the Knime Analytics Platform must be exported, generating either a .knar or a .knwf file.
+
+If the project contains subdirectories/subfolders and/or other workflows, the export must contain these subdirectories and/or workflows:
 
 
 ## 2 – WFs from the main branch are available
