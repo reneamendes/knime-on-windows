@@ -9,7 +9,9 @@ The idea here is to have a Knime Analytics Platform on a Windows Server performi
 
 Yes, you can do these things and much more using Knime Community/Business Hub. But what about you can't pay for these tools ? For instance, here in Brazil, where 38% of work force [earn ~US$ 291/month](https://countryeconomy.com/national-minimum-wage/brazil), the [~US$ 40k of a yearly license of a Basic Knime Business Hub](https://www.knime.com/knime-hub-pricing) are prohibitive !
 
-The proposed solution was implemented in a Brazilian company that uses Knime Analytics Platform with a focus on data integration, without using data apps or web services. The solution has been online since September 2024 and has remained online for more than 500 uninterrupted hours, without needing to be restarted.
+The proposed solution was implemented in a Brazilian company that uses Knime Analytics Platform with a focus on data integration, without using data apps or web services. The solution has been online since September 2024 and has remained online for more than 500 uninterrupted hours, without needing to be restarted !
+
+Download the workflow [here] (workflow/_MANAGEMENT_20250122.knar)!
 
 ## AS IS scenario
 
