@@ -65,20 +65,19 @@ Below are the processes implemented in Knime on Windows Server:
 
 [2 – WFs from the main branch are available](#2--wfs-from-the-main-branch-are-available)
 
-[3 – Import of WFs from the main branch and make them available in the local Knime workspace](#3_–_import_of_wfs_from_the_main_branch_and_make_them_available_in_the_local_knime_workspace)
+[3 – Import of WFs from the main branch and make them available in the local Knime workspace](#3--import-of-wfs-from-the-main-branch-and-make-them-available-in-the-local-knime-workspace)
 
-[4 – Knime Analytics Platform on Windows Server accesses the WFs](#4_–_knime_analytics_platform_on_windows_server_accesses_the_wfs)
+[4 – Knime Analytics Platform on Windows Server accesses the WFs](#4--knime-analytics-platform-on-windows-server-accesses-the-wfs)
 
-[5 CALLER – Scheduled WFs are executed independently]
+[5 - CALLER – Scheduled WFs are executed independently](#5-caller--scheduled-wfs-are-executed-independently)
 
-[6 CALLE – Scheduled WFs are executed independently]
+[6 - CALLE – Scheduled WFs are executed independently](#6-calle--scheduled-wfs-are-executed-independently)
 
-[8 – Stored logs are converted to HTML](#8_–_stored_logs_are_converted_to_html)
+[8 – Stored logs are converted to HTML](#8--stored-logs-are-converted-to-html)
 
-[9 – Web server makes HTML log pages available](#9_–_web_server_makes_html_log_pages_available)
+[9 – Web server makes HTML log pages available](#9--web-server-makes-html-log-pages-available)
 
-[10 - Time based orchestrator](#10_-_time_based_orchestrator)
-
+[10 - Time based orchestrator](#10---time-based-orchestrator)
 
 <picture>
  <source media="(prefers-color-scheme: dark)" srcset="images/knime_on_windows_how_things_work_EN.png">
