@@ -257,11 +257,176 @@ The content of what was developed in the Knime Analytics Platform must be export
 
 If the project contains subdirectories/subfolders and/or other workflows, the export must contain these subdirectories and/or workflows:
 
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/export_workflow2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/export_workflow2.png">
+ <img alt="Export" src="images/export_workflow2.png">
+</picture>
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/export_workflow21.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/export_workflow21.png">
+ <img alt="Export" src="images/export_workflow21.png">
+</picture>
+
+2) Publish the .knar or .knwf file and the scheduling and notification file to a new git branch and commit.
+
+The files should be published as a new branch of the main branch of the Knime project, in git repo account, as in the example below:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/git_repo.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/git_repo.png">
+ <img alt="Git repo project" src="images/git_repo.png">
+</picture>
+
+IMPORTANT: only files from the main branch will be considered in the import process.
 
 ## 2 – WFs from the main branch are available
+
+The workflows considered for import into Knime for Windows are those in the main branch of the Knime project on git account.
+
 ## 3 – Import of WFs from the main branch and make them available in the local Knime workspace
+
+The REPOSITORY_WORKFLOW_EXTRACTOR process is responsible for executing the following tasks:
+
+### 1) Reading the files from the main branch of the Knime project from Gitlab
+
+Excerpt from the REPOSITORY_WORKFLOW_EXTRACTOR workflow responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_1_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_1_1.png">
+ <img alt="Identifying git files" src="images/3_1_1.png">
+</picture>
+
+Files published to the main branch of the Knime project on git repo are uploaded to a temporary folder in the project dataspace on the Knime Analytics Platform on Windows Server (`[knime workspace]/[environment]/CALL/data/[temp folder]`). Afterwards, only files with the extensions .knar, .knwf and .json will be considered.
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_1_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_1_2.png">
+ <img alt="Reading git files" src="images/3_1_2.png">
+</picture>
+
+### 2) Comparing the workflows read from Gitlab with those that have already been loaded
+
+Excerpt from the REPOSITORY_WORKFLOW_EXTRACTOR workflow responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_2_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_2_1.png">
+ <img alt="Comparing current and git files" src="images/3_2_1.png">
+</picture>
+
+Files downloaded from git repo and uploaded to the temporary folder are compared with those that have already been uploaded in previous runs (`[knime workspace]/[environment]/IMPORTED_WORKFLOWS`). The comparison criteria considered are: **file name** and **file size**. If a file with the same name and size already exists, the conclusion is that there were no changes to the content of that file, and there is no need to upload it again.
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_2_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_2_2.png">
+ <img alt="Loaded files" src="images/3_2_2.png">
+</picture>
+
+### 3) Publishing the current and new workflows
+
+Excerpt from the REPOSITORY_WORKFLOW_EXTRACTOR workflow responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_3_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_3_1.png">
+ <img alt="Publishing workflows" src="images/3_3_1.png">
+</picture>
+
+In this step, for each .knar or .knwf file considered, the following actions occur:
+
+- The downloaded file (.knar or .knwf) is copied to the imported worfklows folder (`[knime workspace]/[environment]/IMPORTED_WORKFLOWS`)
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_3_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_3_2.png">
+ <img alt="Publishing workflows" src="images/3_3_2.png">
+</picture>
+
+- The current version of the workflow with the same name is compressed and copied to a backup folder (`/KNIME_WORKFLOW_BACKUP/[environment]`). If a previous version of the workflow does not exist, compression fails.
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_3_3.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_3_3.png">
+ <img alt="Publishing workflows" src="images/3_3_3.png">
+</picture>
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_3_4.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_3_4.png">
+ <img alt="Publishing workflows" src="images/3_3_4.png">
+</picture>
+
+- The .knar or .knwf file is unpacked into the environment workspace (`[knime workspace]/[environment]`)
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_3_5.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_3_5.png">
+ <img alt="Publishing workflows" src="images/3_3_5.png">
+</picture>
+
+### 4) Scheduling the execution of the workflows
+
+Excerpt from the REPOSITORY_WORKFLOW_EXTRACTOR workflow responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/3_4_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/3_4_1.png">
+ <img alt="Scheduling workflows" src="images/3_4_1.png">
+</picture>
+
+In this step, for each .knar or .knwf file considered, the following actions occur:
+
+- The .JSON file with the same name as the .knwf or .knar file is read
+- The workflow execution is scheduled based on the content of the .JSON file
+- A log entry is generated
+
 ## 4 – Knime Analytics Platform on Windows Server accesses the WFs
-## 5 and 6 – Scheduled WFs are executed independently
+
+The workflow executor is, in fact, an instance of Knime Analytics Platform, configured with the necessary extensions to execute the workflows.
+
+In this topic, some points are worth highlighting:
+
+### 1) Executor version
+
+Keeping the Knime Analytics Platform executor up to date is a necessity, since Analysts tend to develop their workflows in the most current version. Visit Knime [site](https://www.knime.com/downloads) to check the current version of Knime Analytics Platform.
+
+In Knime Analytics Platform on Windows Server, the versions are kept in separate directories. The most current version is accessed by a shortcut, so that the instruction to execute Knime will always be the same. Creating the shortcut is detailed below.
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/4_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/4_1.png">
+ <img alt="Executor installation folder." src="images/4_1.png">
+</picture>
+
+In the image above, there are two versions of Knime Analytics Platform installed in separate directories. The KNIME directory is a shortcut to the most current version of Knime.
+
+### 2) Shortcut to the latest version of Knime
+
+The creation of the shortcut to the latest version of Knime Analytics Platform was implemented with the mklink command, as in the following command:
+
+`mklink /D C:\APPLICATIONS\KNIME\KNIME C:\APPLICATIONS\KNIME\knime_5.2.5`
+
+### 3) Workspace and environments
+
+The Knime Analytics Platform workspace on Windows Server was mounted on a separate disk from the server's main disk. Below the workspace root are the environment folders (HOMOLOGATION and PRODUCTION).
+
+**IMPORTANT:** the workflow import process will always import to the PRODUCTION environment.
+
+### 4) Other important directories
+
+The support directories of the workflows that are shared between the environments will be located at the same level as the workspace.
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/4_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/4_2.png">
+ <img alt="Support directories." src="images/4_2.png">
+</picture>
+
+## 5 CALLER – Scheduled WFs are executed independently
+## 6 CALLE – Scheduled WFs are executed independently
 ## 7 – WF execution logs are stored
 ## 8 – Stored logs are converted to HTML
 ## 9 – Web server makes HTML log pages available
