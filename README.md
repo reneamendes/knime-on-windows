@@ -9,6 +9,8 @@ The idea here is to have a Knime Analytics Platform on a Windows Server performi
 
 Yes, you can do these things and much more using Knime Community/Business Hub. But what about you can't pay for these tools ? For instance, here in Brazil, where 38% of work force [earn ~US$ 291/month](https://countryeconomy.com/national-minimum-wage/brazil), the [~US$ 40k of a yearly license of a Basic Knime Business Hub](https://www.knime.com/knime-hub-pricing) are prohibitive !
 
+The proposed solution was implemented in a Brazilian company that uses Knime Analytics Platform with a focus on data integration, without using data apps or web services. The solution has been online since September 2024 and has remained online for more than 500 uninterrupted hours, without needing to be restarted.
+
 ## AS IS scenario
 
 How Knime Server works:
@@ -59,17 +61,17 @@ Now let's dive into the implementation details.
 
 Below are the processes implemented in Knime on Windows Server:
 
-[1 – Analyst produces the WF and publishes it on git repo](#1_-_analyst_produces_the_wf_and_publishes_it_on_git_repo)
+[1 – Analyst produces the WF and publishes it on git repo](#1--analyst-produces-the-wf-and-publishes-it-on-git-repo)
 
-[2 – WFs from the main branch are available](#2_–_wfs_from_the_main_branch_are_available)
+[2 – WFs from the main branch are available](#2--wfs-from-the-main-branch-are-available)
 
 [3 – Import of WFs from the main branch and make them available in the local Knime workspace](#3_–_import_of_wfs_from_the_main_branch_and_make_them_available_in_the_local_knime_workspace)
 
 [4 – Knime Analytics Platform on Windows Server accesses the WFs](#4_–_knime_analytics_platform_on_windows_server_accesses_the_wfs)
 
-[5 and 6 – Scheduled WFs are executed independently](#5_and_6_–_scheduled_wfs_are_executed_independently)
+[5 CALLER – Scheduled WFs are executed independently]
 
-[7 – WF execution logs are stored](#7_–_wf_execution_logs_are_stored)
+[6 CALLE – Scheduled WFs are executed independently]
 
 [8 – Stored logs are converted to HTML](#8_–_stored_logs_are_converted_to_html)
 
@@ -87,10 +89,6 @@ Below are the processes implemented in Knime on Windows Server:
 ## 1 – Analyst produces the WF and publishes it on git repo
 
 In order for the workflow to be considered in the Knime execution process on Windows, some precautions must be followed by the developer:
-
-- [Develop the workflow within the caller-caller model](#develop_the_workflow_within_the_caller-caller_model)
-- [Provide a scheduling and notification file](#provide_a_scheduling_and_notification_file)
-- [Publish the workflow and the notification scheduling file](#publish_the_workflow_and_the_notification_scheduling_file)
 
 ### Develop the workflow within the caller-caller model
 
@@ -426,15 +424,129 @@ The support directories of the workflows that are shared between the environment
 </picture>
 
 ## 5 CALLER – Scheduled WFs are executed independently
+
+Excerpt from the WORKFLOW_TRIGGER workflow responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/5_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/5_1.png">
+ <img alt="Caller." src="images/5_1.png">
+</picture>
+
+The workflows must be executed in the order specified in the scheduling files. To do this, the WORKFLOW_TRIGGER workflow is executed every hour.
+
+In this step of the process, the daily (daily.json), weekly (weekly.json) and monthly (monthly.json) scheduling files are read from the environment's scheduling directory (`[knime workspace]/[environment]/SCHEDULES`) and searched for the current time, day of the week and day of the month.
+
+In the example above, the process found a schedule for the current time within the files. Here are examples of the scheduling files:
+
+**daily.json**
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/5_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/5_2.png">
+ <img alt="Daily schedule." src="images/5_2.png">
+</picture>
+
+**weekly.json**
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/5_3.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/5_3.png">
+ <img alt="Weekly schedule." src="images/5_3.png">
+</picture>
+
+**monthly.json**
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/5_4.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/5_4.png">
+ <img alt="Monthly schedule." src="images/5_4.png">
+</picture>
+
+After finding processes to run within the current time, the process logs the current time, day, and day of the week, and the path to each workflow found in the search. The logs are written to the file `[knime workspace]/[environment]/SCHEDULE_LOG/[yyyy-mm-dd].log`.
+
 ## 6 CALLE – Scheduled WFs are executed independently
-## 7 – WF execution logs are stored
+
+Excerpt from the WORKFLOW_TRIGGER workflow responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/6_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/6_1.png">
+ <img alt="Calle excerpt." src="images/6_1.png">
+</picture>
+
+In this step of the process, each workflow found in the scheduling files is executed within a TRY-CATCH block and the execution logs are generated.
+
+For execution, a specialist component called CALLER is invoked, receiving as an argument the path of the workflow to be executed. The structure of the CALLER is:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/6_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/6_2.png">
+ <img alt="Caller structure." src="images/6_2.png">
+</picture>
+
+In this component, the workflow to be executed, or CALLE, is invoked by the "Call Workflow Service" node. If the execution fails, the exception is collected and logged. A successful execution is also logged. The logs are stored in the pattern `[knime workspace]/[environment]/LOG/[yyyy-mm-dd].log` .
+
 ## 8 – Stored logs are converted to HTML
+
+Workflow LOG_REPORTER, responsible for the task:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/8_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/8_1.png">
+ <img alt="Log reporter" src="images/8_1.png">
+</picture>
+
+In this step, the current day's log file, stored in the path `[knime workspace]/[environment]/LOG/[yyyy-mm-dd].log`, is converted to a report and saved as an HTML page, stored in the path `/KNIME_HTML_LOGS/index.html`.
+
+For each log from the previous day, a link is added to the index.html file.
+
+The previous day's report also needs to be converted to HTML, which is performed by the LOG_CONVERTER workflow.
+
 ## 9 – Web server makes HTML log pages available
+
+The HTML pages are made available to analysts via the NGINX web server.
+
+The report looks like this:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/9_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/9_1.png">
+ <img alt="HTML page" src="images/9_1.png">
+</picture>
+
 ## 10 - Time based orchestrator
+
+The process that executes the scheduled workflows, described in this link, is called by means of a workflow orchestrator, programmed to execute a set of workflows at previously determined time intervals.
+
+The workflow orchestrator is ORCHERSTRATOR_TIME_BASED and its logic is quite simple:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/10_1.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/10_1.png">
+ <img alt="Orchestrator" src="images/10_1.png">
+</picture>
+
+The workflow executes, in an infinite loop, a node that waits for the arrival of a time defined in the previous iteration. When the defined time arrives, a metanode is executed, collecting the start and end times of the execution. The metanode is composed of the following nodes:
+
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="images/10_2.png">
+ <source media="(prefers-color-scheme: light)" srcset="images/10_2.png">
+ <img alt="Orchestrator metanode" src="images/10_2.png">
+</picture>
+
+The actions contained in the metanode are logically chained:
+- An email is sent informing the start of the execution
+- Three nodes are called in sequence:
+    - Workflow trigger
+    - Log converter
+    - Log reporter
+- An email is sent informing the end of the execution.
 
 ## Implementation information
 
 Knime Analytics Platform version: 5.4
 
-
 ## Final remarks
+
+Yes, the ideal is to have Knime Hub. However, in scenarios that only require scheduled execution of workflows with control over the results, the proposed solution meets the need.
