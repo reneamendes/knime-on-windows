@@ -59,9 +59,9 @@ Now let's dive into the implementation details.
 
 Below are the processes implemented in Knime on Windows Server:
 
-[1 – Analyst produces the WF and publishes it on git repo](#1_-_analyst_produces_the_wf_and_publishes_it_on_git_repo)
+[1 – Analyst produces the WF and publishes it on git repo](#1--analyst-produces-the-wf-and-publishes-it-on-git-repo)
 
-[2 – WFs from the main branch are available](#2_–_wfs_from_the_main_branch_are_available)
+[2 – WFs from the main branch are available](#2--wfs-from-the-main-branch-are-available)
 
 [3 – Import of WFs from the main branch and make them available in the local Knime workspace](#3_–_import_of_wfs_from_the_main_branch_and_make_them_available_in_the_local_knime_workspace)
 
@@ -87,10 +87,6 @@ Below are the processes implemented in Knime on Windows Server:
 ## 1 – Analyst produces the WF and publishes it on git repo
 
 In order for the workflow to be considered in the Knime execution process on Windows, some precautions must be followed by the developer:
-
-- [Develop the workflow within the caller-caller model](#develop_the_workflow_within_the_caller-caller_model)
-- [Provide a scheduling and notification file](#provide_a_scheduling_and_notification_file)
-- [Publish the workflow and the notification scheduling file](#publish_the_workflow_and_the_notification_scheduling_file)
 
 ### Develop the workflow within the caller-caller model
 
